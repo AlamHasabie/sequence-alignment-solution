@@ -3,7 +3,6 @@ import os
 
 class Loader :
 	
-	
 	def file_abs(self, filepaths) : 
 		abs_filepaths = []
 		dirpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
