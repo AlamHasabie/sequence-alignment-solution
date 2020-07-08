@@ -1,1 +1,1 @@
-g++ main.cpp modules/loader.cpp modules/profile.cpp -O2
+g++ main.cpp modules/loader.cpp modules/profile.cpp modules/dictionary.cpp -O2 

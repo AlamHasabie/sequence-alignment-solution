@@ -1,4 +1,5 @@
 #include "modules/loader.hpp"
+#include "modules/dictionary.hpp"
 #include <iostream>
 int main(){
 
@@ -23,5 +24,9 @@ int main(){
        profiles[i] = FASTASequenceLoader::load(test_files[i]);
     }
     
+    std::string score_file = "constants/score.txt";
+    std::string alphabet_file = "constants/alphabet.txt";
+
+    SequenceDictionary* sd = new SequenceDictionary(alphabet_file, score_file);
     return 0;
 }
