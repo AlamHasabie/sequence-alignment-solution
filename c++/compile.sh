@@ -1,0 +1,1 @@
+g++ main.cpp modules/loader.cpp modules/profile.cpp -O2
