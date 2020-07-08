@@ -9,6 +9,9 @@ class AlphabetInfo :
 		self.__load_alphabet()
 		self.__load_score()
 	
+	def get_score(self, row_char, col_char) :
+		return  self.__score_matrix[self.__alphabet_dict[row_char]][self.__alphabet_dict[col_char]]
+
 	def __load_score(self):
 		
 		score_filename = "score"
