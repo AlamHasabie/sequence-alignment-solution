@@ -27,3 +27,8 @@ SequenceDictionary::SequenceDictionary(std::string alphabet_file, std::string sc
 int SequenceDictionary::getScore(char c1, char c2){
     return this->score_matrix[(*(this->alphabet_to_int))[c1]][(*(this->alphabet_to_int))[c2]];
 }
+
+
+std::string SequenceDictionary::getAlphabet(){
+    return this->alphabet;
+}
