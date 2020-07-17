@@ -6,17 +6,12 @@ Profile::Profile(std::string sequence){
     for(int i = 0 ; i< this->str_array_length ; i++){
         this->str_array[i] = sequence[i];
     }
-    this->score = 0;
+}
+
+Profile::Profile(){
+    //do nothing
 }
 
 Profile::~Profile(){
 
-}
-
-int Profile::get_profile_score(){
-    return this->score;
-}
-
-void Profile::set_profile_score(int score){ 
-    this->score = score;
 }

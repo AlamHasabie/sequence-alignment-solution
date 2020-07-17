@@ -31,7 +31,8 @@ int main(){
        profiles[i] = FASTASequenceLoader::load(test_files[i],sd->getAlphabet());
     }
     Aligner aligner(sd);
-    std::cout << "\nScore : " << aligner.get_score(profiles[0], profiles[1]) << std::endl; 
+    
+    aligner.pairwise_align(profiles[0], profiles[1]);
 
     return 0;
 }
