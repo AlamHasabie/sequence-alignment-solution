@@ -32,7 +32,6 @@ int main(){
     }
     Aligner aligner(sd);
     
-    aligner.pairwise_align(profiles[0], profiles[1]);
-
+    std::cout << "Score : " << aligner.get_pairwise_score(profiles[0], profiles[1]) << std::endl;
     return 0;
 }

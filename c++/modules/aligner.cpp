@@ -10,60 +10,96 @@ Aligner::Aligner(SequenceDictionary *s){
     this->s = s;
 }
 
+
+void Aligner::get_left_score(Profile *s1, Profile *s2, std::vector<int>& column_score, std::pair<int,int>& start_point, std::pair<int,int>& end_point){
+	
+	int score;
+	int start_row = start_point.first;
+	int start_col = start_point.second;
+	int end_row = end_point.first;
+	int end_col = end_point.second;
+	
+	int n_row = end_row - start_row + 1;
+	int n_col = end_col - start_col + 1;
+	
+	int row_profile_str_len = s1->str_array[0].length();
+	int col_profile_str_len = s2->str_array[0].length();
+	
+	std::vector<int> square_score_list;
+	int current_score[n_col];
+	int new_score[n_col];
+	
+	std::string row_gap = "";
+	std::string col_gap = "";
+	
+	for (int i = 0 ; i < row_profile_str_len ; i++){ row_gap += "_";}
+	for (int i = 0 ; i < col_profile_str_len ; i++){ col_gap += "_";}
+	
+	for (int col = 0 ; col < n_col ; col++){
+		new_score[col] = 0;
+		current_score[col] = 0;
+	}
+	for (int row = start_row ; row <= end_row ; row++){
+		for (int col = start_col ; col <= end_col ; col++){
+			std::cout << "\rLeft score : Row " << row << " of " << end_row;
+			square_score_list.clear();
+			if((row==start_row)&&(col==start_col)){
+				square_score_list.push_back(0);
+			}
+			
+			if(row > start_row){
+				score = this->get_profile_column_score(s1->str_array[row-1], col_gap) + current_score[col];
+				square_score_list.push_back(score);
+			}
+			
+			if (col > start_col) {
+				score = this->get_profile_column_score(row_gap, s2->str_array[col-1]) + new_score[col-1];
+				square_score_list.push_back(score);
+			}
+			
+			if ((row > start_row)&&(col > start_col)) {
+				score = this->get_profile_column_score(s1->str_array[row-1], s2->str_array[col-1]) + current_score[col-1];
+				square_score_list.push_back(score);
+			}
+			
+			new_score[col] = (int) *(std::max_element(square_score_list.begin(), square_score_list.end()));
+		}
+		
+		for (int col = 0 ; col < n_col ; col++){
+			current_score[col] = new_score[col];
+		}
+		
+		column_score[row-start_row] += current_score[n_col-1];
+	}
+	std::cout << std::endl;
+}
+
+void Aligner::get_right_score(Profile *s1, Profile *s2, std::vector<int>& column_score, std::pair<int, int>& start_point, std::pair<int,int>& end_point){
+	
+	// Reverse string
+	int start_row = start_point.first;
+	int start_col = start_point.second;
+	int end_row = end_point.first;
+	int end_col = end_point.second;
+} 
+
 int Aligner::get_pairwise_score(Profile* s1, Profile* s2){
 
-    int n_row = s1->str_array_length + 1;
-    int n_col = s1->str_array_length + 1;
+	int start_row, start_col = 0;
+    int end_row = s1->str_array_length;
+    int end_col = s1->str_array_length;
 
-    int prof_len_row = s1->str_array[0].length();
-    int prof_len_col = s2->str_array[0].length();
-
-    int current_score[n_col];
-    int new_score[n_col];
-    int score;
-    std::vector<int> square_score_list;
-    for(int i = 0 ; i < n_col; i++){
-        current_score[i] = 0;
-        new_score[i] = 0;
-    } 
-    for (int row = 0 ; row < n_row ; row++){
-        std::cout << "\rRow " << row + 1 << " of " << n_row;
-        for (int col = 0; col < n_col ; col++){
-            square_score_list.clear();
-            if((col==0)&&(row==0)){
-                square_score_list.push_back(0);
-            } else {
-                if(col>0){
-                    // Fetch score from left
-                    std::string gap = "";
-                    for (int k = 0; k < prof_len_row; k++){gap+="_";}
-                    score = this->get_profile_column_score(gap, s2->str_array[col-1]);
-                    score += new_score[col-1];
-                    square_score_list.push_back(score);
-                }
-
-                if(row > 0){
-                    // Fetch score from above
-                    std::string gap = "";
-                    for (int k = 0; k < prof_len_col; k++){gap+="_";}
-                    score = this->get_profile_column_score(gap, s1->str_array[row-1]);
-                    score += current_score[col];
-                    square_score_list.push_back(score);
-                }
-
-                if((col>0)&&(row>0)){
-                    score = this->get_profile_column_score(s1->str_array[row-1], s2->str_array[col-1]);
-                    score += current_score[col-1];
-                    square_score_list.push_back(score);
-                }
-            }
-            new_score[col] = (int) *(std::max_element(square_score_list.begin(), square_score_list.end()));
-        }
-        for(int i = 0 ; i < n_col ; i++){
-            current_score[i] = new_score[i];
-        }
-    }
-    return current_score[n_col-1];
+	std::vector<int> row_score;
+	for(int i = 0 ; i <= end_row - start_row ; i++){
+		row_score.push_back(0);
+	}
+	
+	std::pair<int,int> start_point = std::make_pair(start_row, start_col);
+	std::pair<int,int> end_point = std::make_pair(end_row, end_col);
+	
+	this->get_left_score(s1, s2, row_score, start_point, end_point);
+	
+	return row_score[end_row];
 }
 
 int Aligner::get_profile_column_score(std::string& s1, std::string& s2){
@@ -86,9 +122,6 @@ Profile* Aligner::global_align(Profile** align, int n_profiles){
 
 }
 
-
-// Linear memory alignment
-
 Profile* Aligner::pairwise_align(Profile* p1, Profile *p2){
     
     // Do brute_force if col_wide = 1
@@ -104,12 +137,7 @@ Profile* Aligner::pairwise_align(Profile* p1, Profile *p2){
         std::cout << backtrack[i];
     }
     std::cout << std::endl;
-
-
 }
-
-// Do brute alignment
-// If 
 
 void Aligner::brute_align(
     Profile *p_row, 
@@ -145,7 +173,6 @@ void Aligner::brute_align(
                 if((row==start_row)&&(col==start_col)){
                     square_score_list.push_back(std::make_pair('t',0));
                 } else {
-                    // Fetch from left
                     if (col > start_col){
                         square_score = this->get_profile_column_score(row_gap, p_col->str_array[col-1]);
                         square_score += max_score[row-start_row][col-start_col-1];
@@ -171,7 +198,6 @@ void Aligner::brute_align(
                 max_score[row-start_row][col-start_col] = max_pair.second;
             }
         }
-
 
         // Build the string
         int current_row = end_row - start_row;
