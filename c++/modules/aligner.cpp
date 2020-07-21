@@ -268,8 +268,8 @@ void Aligner::recursive_pairwise_align(Profile *p1, Profile *p2, std::vector<cha
     std::cout << "Recursive , start point " << startpoint.first << " , " << startpoint.second << std::endl;
     std::cout << "Recursive , end point " << endpoint.first << " , " << endpoint.second << std::endl;
 
-    int row_threshold = 10;
-    if(endpoint.first - startpoint.first < row_threshold){
+    int column_threshold = 10;
+    if(endpoint.second - startpoint.second < column_threshold){
         this->brute_align(p1, p2, startpoint, endpoint, directions);
     }
 
@@ -288,13 +288,12 @@ Profile* Aligner::pairwise_align(Profile* p1, Profile *p2){
     // For now, testing using brute force first
     std::vector<char> backtrack;
     std::pair<int, int> start_point = std::make_pair(0,0);
-    std::pair<int, int> end_point = std::make_pair(100,100);
+    std::pair<int, int> end_point = std::make_pair(p1->str_array_length, p2->str_array_length);
     this->recursive_pairwise_align(p1, p2, backtrack,start_point,end_point);
-    std::vector<char>::reverse_iterator it;
-    std::cout << backtrack.size() << std::endl;
-    for(it = backtrack.rbegin(); it != backtrack.rend(); it++){
-        std::cout << *it << "->";
-    }
+
+    Profile* new_profile = new Profile(p1, p2, backtrack);
+
+    return new_profile;
 }
 
 void Aligner::brute_align(

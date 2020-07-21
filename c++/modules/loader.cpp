@@ -15,7 +15,6 @@ Profile* FASTASequenceLoader::load(std::string filename, std::string alphabet){
             sequence += line;
         }
     }
-
     sequence = FASTASequenceLoader::sanitize(sequence, alphabet);
     return new Profile(sequence);
 }
