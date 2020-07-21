@@ -21,7 +21,7 @@ int main(){
     
     // For testing purposes
     Profile* profiles[2];
-    std::string test_files[] = {"../data/nucleotide/MT019529.1.fasta", "../data/nucleotide/MT044258.1.fasta"};
+    std::string test_files[] = {"../data/protein/AGP04929.1.fasta", "../data/protein/AYN64561.1.fasta"};
     
     std::string score_file = "constants/score.txt";
     std::string alphabet_file = "constants/alphabet.txt";

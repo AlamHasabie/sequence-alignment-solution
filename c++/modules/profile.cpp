@@ -8,10 +8,6 @@ Profile::Profile(std::string sequence){
     }
 }
 
-Profile::Profile(){
-    //do nothing
-}
-
 Profile::~Profile(){
 
 }

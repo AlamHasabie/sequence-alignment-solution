@@ -14,6 +14,9 @@ Aligner::Aligner(SequenceDictionary *s){
 void Aligner::get_left_score(Profile *s1, Profile *s2, std::vector<int>& column_score, std::pair<int,int>& start_point, std::pair<int,int>& end_point){
 	
 	int score;
+    int max_score;
+    bool is_init_score;
+
 	int start_row = start_point.first;
 	int start_col = start_point.second;
 	int end_row = end_point.first;
@@ -25,7 +28,6 @@ void Aligner::get_left_score(Profile *s1, Profile *s2, std::vector<int>& column_
 	int row_profile_str_len = s1->str_array[0].length();
 	int col_profile_str_len = s2->str_array[0].length();
 	
-	std::vector<int> square_score_list;
 	int current_score[n_col];
 	int new_score[n_col];
 	
@@ -42,27 +44,48 @@ void Aligner::get_left_score(Profile *s1, Profile *s2, std::vector<int>& column_
 	for (int row = start_row ; row <= end_row ; row++){
 		for (int col = start_col ; col <= end_col ; col++){
 			std::cout << "\rLeft score : Row " << row << " of " << end_row;
-			square_score_list.clear();
+            is_init_score = false;
 			if((row==start_row)&&(col==start_col)){
-				square_score_list.push_back(0);
+                max_score = 0;
+                is_init_score = true;
 			}
 			
 			if(row > start_row){
 				score = this->get_profile_column_score(s1->str_array[row-1], col_gap) + current_score[col];
-				square_score_list.push_back(score);
+				if(!is_init_score){
+                    max_score = score;
+                    is_init_score = true;
+                } else {
+                    if(score > max_score){
+                        max_score = score;
+                    }
+                }
 			}
 			
 			if (col > start_col) {
 				score = this->get_profile_column_score(row_gap, s2->str_array[col-1]) + new_score[col-1];
-				square_score_list.push_back(score);
+				if(!is_init_score){
+                    max_score = score;
+                    is_init_score = true;
+                } else {
+                    if(score > max_score){
+                        max_score = score;
+                    }
+                }
 			}
 			
 			if ((row > start_row)&&(col > start_col)) {
 				score = this->get_profile_column_score(s1->str_array[row-1], s2->str_array[col-1]) + current_score[col-1];
-				square_score_list.push_back(score);
+				if(!is_init_score){
+                    max_score = score;
+                    is_init_score = true;
+                } else {
+                    if(score > max_score){
+                        max_score = score;
+                    }
+                }
 			}
-			
-			new_score[col] = (int) *(std::max_element(square_score_list.begin(), square_score_list.end()));
+			new_score[col] = max_score;
 		}
 		
 		for (int col = 0 ; col < n_col ; col++){
